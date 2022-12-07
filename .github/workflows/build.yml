@@ -1,0 +1,23 @@
+on: [push]
+name: Cross build sample
+jobs:
+  build_cross:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        target: [aarch64, x86_64]
+    runs-on: ${{ matrix.os }}
+    name: Cross-build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}-unknown-linux-gnu
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --target ${{ matrix.target }}-unknown-linux-gnu
